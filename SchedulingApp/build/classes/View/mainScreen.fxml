@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ButtonBar?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane id="AnchorPane" prefHeight="375.0" prefWidth="834.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="View.MainScreenController">
+   <children>
+      <VBox layoutX="1.0" prefHeight="375.0" prefWidth="834.0">
+         <children>
+            <HBox prefHeight="35.0" prefWidth="600.0">
+               <children>
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Appointments">
+                     <HBox.margin>
+                        <Insets left="10.0" top="10.0" />
+                     </HBox.margin>
+                  </Text>
+                  <ButtonBar prefHeight="34.0" prefWidth="748.0">
+                    <buttons>
+                        <RadioButton mnemonicParsing="false" text="Month View" />
+                        <RadioButton mnemonicParsing="false" text="Week View">
+                           <padding>
+                              <Insets right="20.0" />
+                           </padding>
+                        </RadioButton>
+                      <Button maxWidth="-Infinity" mnemonicParsing="false" prefHeight="25.0" prefWidth="75.0" text="Log Out" />
+                    </buttons>
+                     <HBox.margin>
+                        <Insets right="30.0" />
+                     </HBox.margin>
+                  </ButtonBar>
+               </children>
+            </HBox>
+            <TableView prefHeight="291.0" prefWidth="805.0">
+              <columns>
+                <TableColumn prefWidth="105.77776765823364" text="Appointment ID" />
+                <TableColumn prefWidth="71.5555419921875" text="Title" />
+                  <TableColumn prefWidth="99.11114501953125" text="Description" />
+                  <TableColumn prefWidth="81.77777099609375" text="Location" />
+                  <TableColumn prefWidth="76.44439697265625" text="Contact" />
+                  <TableColumn prefWidth="84.44454956054688" text="Type" />
+                  <TableColumn minWidth="8.44439697265625" prefWidth="73.77777099609375" text="Start Time" />
+                  <TableColumn minWidth="9.77777099609375" prefWidth="68.8887939453125" text="End Time" />
+                  <TableColumn prefWidth="87.1112060546875" text="Customer ID" />
+              </columns>
+            </TableView>
+            <ButtonBar prefHeight="53.0" prefWidth="600.0">
+              <buttons>
+                  <Button mnemonicParsing="false" text="Add Appointment">
+                     <font>
+                        <Font size="10.0" />
+                     </font>
+                  </Button>
+                  <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="220.0" text="Update Appointment">
+                     <font>
+                        <Font size="10.0" />
+                     </font>
+                  </Button>
+                  <Button mnemonicParsing="false" text="Remove Appointment">
+                     <font>
+                        <Font size="10.0" />
+                     </font>
+                  </Button>
+                  <Button mnemonicParsing="false" text="Customers" textAlignment="CENTER">
+                     <font>
+                        <Font size="10.0" />
+                     </font>
+                  </Button>
+              </buttons>
+               <padding>
+                  <Insets left="20.0" right="20.0" />
+               </padding>
+            </ButtonBar>
+         </children>
+      </VBox>
+   </children>
+</AnchorPane>
