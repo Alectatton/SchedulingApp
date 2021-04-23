@@ -6,7 +6,7 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane id="AnchorPane" prefHeight="477.0" prefWidth="474.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="View.AddAppointmentController">
+<AnchorPane id="AnchorPane" prefHeight="477.0" prefWidth="474.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="View.modAppointmentController">
    <children>
       <ComboBox fx:id="customerBox" layoutX="62.0" layoutY="31.0" onAction="#updateCustomer" prefHeight="25.0" prefWidth="173.0" promptText="Customer" />
       <TextField fx:id="appointmentIdBox" disable="true" layoutX="248.0" layoutY="31.0" prefHeight="25.0" prefWidth="173.0" promptText="Appointment ID" />

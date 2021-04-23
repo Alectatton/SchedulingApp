@@ -9,38 +9,37 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-
-<AnchorPane id="AnchorPane" prefHeight="365.0" prefWidth="726.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/11.0.1" fx:controller="View.CustomersController">
+<AnchorPane id="AnchorPane" prefHeight="365.0" prefWidth="726.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="View.CustomersController">
    <children>
       <VBox layoutX="-2.0" prefHeight="379.0" prefWidth="726.0">
          <children>
-            <TableView prefHeight="332.0" prefWidth="706.0">
+            <TableView fx:id="customerTable" prefHeight="332.0" prefWidth="706.0">
               <columns>
-                <TableColumn prefWidth="98.22219848632812" text="Customer ID" />
-                <TableColumn prefWidth="155.5555419921875" text="Name" />
-                  <TableColumn prefWidth="180.888916015625" text="Address" />
-                  <TableColumn minWidth="0.0" prefWidth="97.33331298828125" text="Postal Code" />
-                  <TableColumn prefWidth="193.77776421440967" text="Phone" />
+                <TableColumn fx:id="customerIdCol" prefWidth="98.22219848632812" text="Customer ID" />
+                <TableColumn fx:id="customerNameCol" prefWidth="155.5555419921875" text="Name" />
+                  <TableColumn fx:id="customerAddressCol" prefWidth="180.888916015625" text="Address" />
+                  <TableColumn fx:id="customerPostalCol" minWidth="0.0" prefWidth="97.33331298828125" text="Postal Code" />
+                  <TableColumn fx:id="customerPhoneCol" prefWidth="193.77776421440967" text="Phone" />
               </columns>
             </TableView>
             <ButtonBar prefHeight="40.0" prefWidth="200.0">
               <buttons>
-                  <Button mnemonicParsing="false" prefHeight="23.0" prefWidth="189.0" text="Go Back">
+                  <Button fx:id="mainScreenButton" mnemonicParsing="false" onAction="#handleGoBack" prefHeight="23.0" prefWidth="189.0" text="Go Back">
                      <font>
                         <Font size="10.0" />
                      </font>
                   </Button>
-                  <Button mnemonicParsing="false" text="Add Customer">
+                  <Button fx:id="addCustomerButton" mnemonicParsing="false" onAction="#handleAddCustomer" text="Add Customer">
                      <font>
                         <Font size="10.0" />
                      </font>
                   </Button>
-                  <Button mnemonicParsing="false" text="Update Customer">
+                  <Button fx:id="updateCustomerButton" mnemonicParsing="false" onAction="#handleUpdateCustomer" text="Update Customer">
                      <font>
                         <Font size="10.0" />
                      </font>
                   </Button>
-                <Button mnemonicParsing="false" text="Remove Customer">
+                <Button mnemonicParsing="false" onAction="#handleRemoveCustomer" text="Remove Customer">
                      <font>
                         <Font size="10.0" />
                      </font>

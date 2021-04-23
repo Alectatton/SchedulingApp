@@ -5,7 +5,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane id="AnchorPane" prefHeight="300.0" prefWidth="365.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="View.AddCustomerController">
+<AnchorPane id="AnchorPane" prefHeight="300.0" prefWidth="365.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="View.modCustomerController">
    <children>
       <TextField fx:id="idText" disable="true" editable="false" layoutX="144.0" layoutY="54.0" prefHeight="25.0" prefWidth="192.0" promptText="Auto Gen" />
       <TextField fx:id="nameText" layoutX="144.0" layoutY="88.0" prefHeight="25.0" prefWidth="192.0" promptText="Name" />
