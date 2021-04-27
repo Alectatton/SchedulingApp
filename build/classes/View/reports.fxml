@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane id="AnchorPane" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="View.ReportsController">
+   <children>
+      <VBox layoutX="-2.0" layoutY="11.0" prefHeight="388.0" prefWidth="751.0">
+         <children>
+            <HBox alignment="TOP_CENTER" prefHeight="22.0" prefWidth="600.0">
+               <children>
+                  <RadioButton fx:id="byMonth" mnemonicParsing="false" onAction="#handleByMonth" prefHeight="17.0" prefWidth="206.0" text="Appointments by month">
+                     <HBox.margin>
+                        <Insets left="10.0" />
+                     </HBox.margin>
+                  </RadioButton>
+                  <RadioButton fx:id="byCustomer" mnemonicParsing="false" onAction="#handleByCustomer" prefHeight="17.0" prefWidth="207.0" text="Customer Schedules">
+                     <HBox.margin>
+                        <Insets bottom="5.0" />
+                     </HBox.margin>
+                  </RadioButton>
+                  <RadioButton fx:id="reportThree" mnemonicParsing="false" onAction="#handleReportThree" prefHeight="17.0" prefWidth="152.0" text="Created by User">
+                     <HBox.margin>
+                        <Insets left="10.0" />
+                     </HBox.margin>
+                  </RadioButton>
+               </children>
+               <VBox.margin>
+                  <Insets left="30.0" right="30.0" />
+               </VBox.margin>
+            </HBox>
+            <TextArea fx:id="display" prefHeight="334.0" prefWidth="600.0" />
+            <HBox prefHeight="43.0" prefWidth="600.0">
+               <children>
+                  <Button fx:id="homeButton" mnemonicParsing="false" onAction="#handleHomeButton" prefHeight="25.0" prefWidth="170.0" text="Return to main screen">
+                     <HBox.margin>
+                        <Insets left="10.0" top="5.0" />
+                     </HBox.margin>
+                  </Button>
+                  <ComboBox fx:id="customerBox" onAction="#handleCustomerChange" prefWidth="150.0" promptText="Customer">
+                     <HBox.margin>
+                        <Insets left="425.0" right="5.0" top="5.0" />
+                     </HBox.margin>
+                  </ComboBox>
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+   </children>
+</AnchorPane>
