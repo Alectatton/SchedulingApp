@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ButtonBar?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane id="AnchorPane" prefHeight="375.0" prefWidth="1108.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="View.MainScreenController">
+   <children>
+      <VBox layoutX="1.0" prefHeight="375.0" prefWidth="1108.0">
+         <children>
+            <HBox prefHeight="34.0" prefWidth="858.0">
+               <children>
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Appointments">
+                     <HBox.margin>
+                        <Insets left="10.0" top="10.0" />
+                     </HBox.margin>
+                  </Text>
+                  <ButtonBar prefHeight="34.0" prefWidth="1028.0">
+                    <buttons>
+                        <RadioButton fx:id="monthView" mnemonicParsing="false" onAction="#handleMonth" text="Next Month" />
+                        <RadioButton fx:id="weekView" mnemonicParsing="false" onAction="#handleWeek" prefHeight="17.0" prefWidth="114.0" text="Next Week">
+                           <padding>
+                              <Insets right="20.0" />
+                           </padding>
+                        </RadioButton>
+                    </buttons>
+                     <HBox.margin>
+                        <Insets right="30.0" />
+                     </HBox.margin>
+                  </ButtonBar>
+               </children>
+            </HBox>
+            <TableView fx:id="appointmentTable" prefHeight="290.0" prefWidth="964.0">
+              <columns>
+                <TableColumn fx:id="appointmentIdCol" prefWidth="103.42864656448364" text="Appointment ID" />
+                <TableColumn fx:id="appointmentTitleCol" prefWidth="109.71424102783203" text="Title" />
+                  <TableColumn fx:id="appointmentDescCol" prefWidth="144.0" text="Description" />
+                  <TableColumn fx:id="appointmentLocationCol" prefWidth="147.42852783203125" text="Location" />
+                  <TableColumn fx:id="appointmentContactCol" prefWidth="68.00003051757812" text="Contact ID" />
+                  <TableColumn fx:id="appointmentTypeCol" prefWidth="94.28564453125" text="Type" />
+                  <TableColumn fx:id="appointmentStartCol" minWidth="8.44439697265625" prefWidth="158.2857666015625" text="Start Time" />
+                  <TableColumn fx:id="appointmentEndCol" minWidth="9.77777099609375" prefWidth="169.142822265625" text="End Time" />
+                  <TableColumn fx:id="appointmentCustIdCol" prefWidth="112.57135009765625" text="Customer ID" />
+              </columns>
+            </TableView>
+            <ButtonBar prefHeight="53.0" prefWidth="995.0">
+              <buttons>
+                  <Button fx:id="addAppointment" mnemonicParsing="false" onAction="#handleAddAppointment" prefHeight="23.0" prefWidth="343.0" text="Add Appointment">
+                     <font>
+                        <Font size="10.0" />
+                     </font>
+                  </Button>
+                  <Button fx:id="updateAppointment" mnemonicParsing="false" onAction="#handleUpdateAppointment" prefHeight="25.0" prefWidth="220.0" text="Update Appointment">
+                     <font>
+                        <Font size="10.0" />
+                     </font>
+                  </Button>
+                  <Button fx:id="removeAppointment" mnemonicParsing="false" onAction="#handleDeleteAppointment" text="Remove Appointment">
+                     <font>
+                        <Font size="10.0" />
+                     </font>
+                  </Button>
+                  <Button fx:id="customers" mnemonicParsing="false" onAction="#handleCustomersButton" text="Customers" textAlignment="CENTER">
+                     <font>
+                        <Font size="10.0" />
+                     </font>
+                  </Button>
+                  <Button fx:id="reportsButton" mnemonicParsing="false" onAction="#handleReports" text="Reports" />
+              </buttons>
+               <padding>
+                  <Insets left="20.0" right="20.0" />
+               </padding>
+            </ButtonBar>
+         </children>
+      </VBox>
+   </children>
+</AnchorPane>
