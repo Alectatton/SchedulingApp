@@ -1,23 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane id="AnchorPane" prefHeight="300.0" prefWidth="365.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="View.modCustomerController">
+<AnchorPane id="AnchorPane" prefHeight="395.0" prefWidth="365.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="View.modCustomerController">
    <children>
       <TextField fx:id="idText" disable="true" editable="false" layoutX="144.0" layoutY="54.0" prefHeight="25.0" prefWidth="192.0" promptText="Auto Gen" />
       <TextField fx:id="nameText" layoutX="144.0" layoutY="88.0" prefHeight="25.0" prefWidth="192.0" promptText="Name" />
       <TextField fx:id="addressText" layoutX="144.0" layoutY="125.0" prefHeight="25.0" prefWidth="192.0" promptText="Address" />
       <TextField fx:id="postalText" layoutX="144.0" layoutY="161.0" prefHeight="25.0" prefWidth="192.0" promptText="Postal Code" />
       <TextField fx:id="phoneText" layoutX="144.0" layoutY="199.0" prefHeight="25.0" prefWidth="192.0" promptText="Phone Number" />
-      <Button fx:id="saveButton" layoutX="162.0" layoutY="252.0" mnemonicParsing="false" onAction="#handleSaveButton" text="Save" />
-      <Button fx:id="cancelButton" layoutX="214.0" layoutY="252.0" mnemonicParsing="false" onAction="#handleCancelButton" text="Cancel" />
+      <Button fx:id="saveButton" layoutX="124.0" layoutY="335.0" mnemonicParsing="false" onAction="#handleSaveButton" text="Save" />
+      <Button fx:id="cancelButton" layoutX="188.0" layoutY="335.0" mnemonicParsing="false" onAction="#handleCancelButton" text="Cancel" />
       <Text layoutX="58.0" layoutY="71.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Customer ID" />
       <Text layoutX="58.0" layoutY="105.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Name" />
       <Text layoutX="58.0" layoutY="142.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Address" />
       <Text layoutX="57.0" layoutY="178.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Postal Code" />
       <Text layoutX="55.0" layoutY="216.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Phone" />
+      <ComboBox fx:id="countryBox" layoutX="144.0" layoutY="230.0" onAction="#updateDivision" prefHeight="25.0" prefWidth="192.0" promptText="Country" />
+      <ComboBox fx:id="divisionBox" layoutX="144.0" layoutY="259.0" onContextMenuRequested="#updateDivision" prefHeight="25.0" prefWidth="192.0" promptText="First-level division" />
+      <Text layoutX="52.0" layoutY="247.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Country" />
+      <Text layoutX="54.0" layoutY="276.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Division" wrappingWidth="74.56182861328125" />
    </children>
 </AnchorPane>

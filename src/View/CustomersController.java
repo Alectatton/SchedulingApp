@@ -14,7 +14,6 @@ import java.sql.Statement;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -56,7 +55,10 @@ public class CustomersController implements Initializable {
     ObservableList<Customer> customers = FXCollections.observableArrayList();
     
     
-    //Handle go back button (back to main screen)
+    /**
+     * Method to go back to the main screen
+     * @throws java.io.IOException
+     */
     public void handleGoBack () throws IOException {
         Parent loader = FXMLLoader.load(getClass().getResource("mainScreen.fxml"));
         Scene scene = new Scene(loader);
@@ -66,7 +68,10 @@ public class CustomersController implements Initializable {
         window.show(); 
     }
     
-    //Handle add customer button
+    /**
+     * Method to go to the add customer screen
+     * @throws java.io.IOException
+     */
     public void handleAddCustomer () throws IOException {
         Parent loader = FXMLLoader.load(getClass().getResource("addCustomer.fxml"));
         Scene scene = new Scene(loader);
@@ -76,7 +81,10 @@ public class CustomersController implements Initializable {
         window.show(); 
     }    
    
-    //Handle update customer button
+    /**
+     * Method to handle updating the selected customer
+     * @throws java.io.IOException
+     */
     public void handleUpdateCustomer () throws IOException {
         selectedCustomer = customerTable.getSelectionModel().getSelectedItem();
         if (selectedCustomer == null) {
@@ -91,19 +99,42 @@ public class CustomersController implements Initializable {
             window.show();
         }
     }
-    
-    
-    //Handle remove customer button
+     
+    /**
+     *  Method to remove the selected customer
+     * @throws java.sql.SQLException
+     */
     public void handleRemoveCustomer () throws SQLException {
         selectedCustomer = customerTable.getSelectionModel().getSelectedItem();        
-        int selectedId = selectedCustomer.getCustomerId();  
-        Statement statement = DBConnection.conn.createStatement();
-        String sqlStatement = "DELETE FROM customers WHERE Customer_ID = " + selectedId + ";";        
-        statement.execute(sqlStatement);      
-        customers.removeAll(customers);
-        updateCustomersTable();
+        if (selectedCustomer == null) {
+            noSelectionAlert();
+        }
+        else {
+            try {
+                int selectedId = selectedCustomer.getCustomerId();  
+                Statement statement = DBConnection.conn.createStatement();
+                String sqlStatement = "DELETE FROM customers WHERE Customer_ID = " + selectedId + ";";        
+                statement.execute(sqlStatement);      
+                customers.removeAll(customers);
+                updateCustomersTable();
+                Alert nullalert = new Alert(Alert.AlertType.CONFIRMATION);
+                nullalert.setTitle("Success!");
+                nullalert.setContentText("Selected appointment removed");
+                nullalert.showAndWait();
+            }
+            catch (SQLException e) {
+                Alert nullalert = new Alert(Alert.AlertType.ERROR);
+                nullalert.setTitle("Customer has an appointment");
+                nullalert.setContentText("You must delete all associated appointments before removing");
+                nullalert.showAndWait();
+            }
+        }
     }
     
+     /**
+     * Method to update the customers table with all of the customers in the database
+     * @throws java.sql.SQLException
+     */
     public void updateCustomersTable () throws SQLException {
         Statement statement = DBConnection.conn.createStatement();
         String sqlStatement = "SELECT Customer_ID, Customer_Name, Address, Postal_Code, Phone FROM customers ORDER BY customers.Customer_ID";        
@@ -118,6 +149,25 @@ public class CustomersController implements Initializable {
             customers.addAll(customer);
         }
         customerTable.setItems(customers);
+    }
+    
+    /**
+     * Method to alert if no customer is selected
+     */
+    private void noSelectionAlert() {
+        Alert nullalert = new Alert(Alert.AlertType.ERROR);
+        nullalert.setTitle("No Selection");
+        nullalert.setContentText("You must make a selection before you can do this action");
+        nullalert.showAndWait();
+    }
+    
+    /**
+     *
+     * Method to get the selected customer
+     * @return
+     */
+    public static Customer getSelectedCustomer() {
+        return selectedCustomer;
     }
     
     /**
@@ -138,21 +188,6 @@ public class CustomersController implements Initializable {
         } catch (SQLException ex) {
             Logger.getLogger(CustomersController.class.getName()).log(Level.SEVERE, null, ex);
         }
-    }    
-
-    private void noSelectionAlert() {
-        Alert nullalert = new Alert(Alert.AlertType.ERROR);
-        nullalert.setTitle("No Selection");
-        nullalert.setContentText("You must make a selection before you can do this action");
-        nullalert.showAndWait();
-    }
-    
-    /**
-     *
-     * @return
-     */
-    public static Customer getSelectedCustomer() {
-        return selectedCustomer;
-    }
+    }  
     
 }

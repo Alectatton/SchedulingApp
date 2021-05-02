@@ -14,9 +14,12 @@ import java.net.URL;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ResourceBundle;
@@ -37,6 +40,7 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.ToggleGroup;
+
 import javafx.stage.Stage;
 import utils.DBConnection;
 
@@ -76,7 +80,13 @@ public class MainScreenController implements Initializable {
     private ToggleGroup viewToggle;
     private boolean isWeekView = true;
     
-    //Add appointment handler
+    //Local time zone
+    public ZoneId zone = ZoneId.systemDefault();
+    
+    /**
+     * Method to go to the add appointment screen 
+     * @throws java.io.IOException
+     */
     public void handleAddAppointment () throws IOException {
         Parent loader = FXMLLoader.load(getClass().getResource("addAppointment.fxml"));
         Scene scene = new Scene(loader);
@@ -86,29 +96,61 @@ public class MainScreenController implements Initializable {
         window.show(); 
     }
     
-    //update appointment handler
+    /**
+     * Update the selected appointment
+     * @throws java.io.IOException
+     */
     public void handleUpdateAppointment() throws IOException {
         selectedAppointment = appointmentTable.getSelectionModel().getSelectedItem();
-        Parent loader = FXMLLoader.load(getClass().getResource("modAppointment.fxml"));
-        Scene scene = new Scene(loader);
-        Stage window = (Stage) updateAppointment.getScene().getWindow();
-        window.setScene(scene);
-        window.centerOnScreen();
-        window.show();
+        if (selectedAppointment == null) {
+            Alert nullalert = new Alert(Alert.AlertType.ERROR);
+            nullalert.setTitle("Alert!");
+            nullalert.setContentText("Must select an appointment before this action!");
+            nullalert.showAndWait();
+        }
+        else {
+            Parent loader = FXMLLoader.load(getClass().getResource("modAppointment.fxml"));
+            Scene scene = new Scene(loader);
+            Stage window = (Stage) updateAppointment.getScene().getWindow();
+            window.setScene(scene);
+            window.centerOnScreen();
+            window.show();
+        }
     }
     
-    //remove appointment handler
+    /**
+     * Delete the selected appointment
+     * @throws java.sql.SQLException
+     */
     public void handleDeleteAppointment() throws SQLException {
-        selectedAppointment = appointmentTable.getSelectionModel().getSelectedItem();        
-        int selectedId = selectedAppointment.getAppointmentID();  
-        Statement statement = DBConnection.conn.createStatement();
-        String sqlStatement = "DELETE FROM appointments WHERE Appointment_ID = " + selectedId + ";";        
-        statement.execute(sqlStatement);      
-        appointments.removeAll(appointments);
-        updateAppointmentTable();
-        System.out.println(selectedId);
+        selectedAppointment = appointmentTable.getSelectionModel().getSelectedItem();     
+        
+        if (selectedAppointment == null) {
+            Alert nullalert = new Alert(Alert.AlertType.ERROR);
+            nullalert.setTitle("Alert!");
+            nullalert.setContentText("Must select an appointment before this action!");
+            nullalert.showAndWait();
+        }
+        else {
+            int selectedId = selectedAppointment.getAppointmentID();  
+            Statement statement = DBConnection.conn.createStatement();
+            String sqlStatement = "DELETE FROM appointments WHERE Appointment_ID = " + selectedId + ";";        
+            statement.execute(sqlStatement);  
+        
+            appointments.removeAll(appointments);
+            updateAppointmentList();
+        
+            Alert nullalert = new Alert(Alert.AlertType.CONFIRMATION);
+            nullalert.setTitle("Success!");
+            nullalert.setContentText("Selected appointment removed");
+            nullalert.showAndWait();
+        }
     }
     
+    /**
+     * Go to the reports screen
+     * @throws java.io.IOException
+     */
     public void handleReports() throws IOException {
         Parent loader = FXMLLoader.load(getClass().getResource("reports.fxml"));
         Scene scene = new Scene(loader);
@@ -118,7 +160,10 @@ public class MainScreenController implements Initializable {
         window.show();
     }
     
-    //customers page handler
+    /**
+     * Go to the customers screen
+     * @throws java.io.IOException
+     */
     public void handleCustomersButton () throws IOException {
         Parent loader = FXMLLoader.load(getClass().getResource("customers.fxml"));
         Scene scene = new Scene(loader);
@@ -126,6 +171,128 @@ public class MainScreenController implements Initializable {
         window.setScene(scene);
         window.centerOnScreen();
         window.show(); 
+    }
+    
+    /**
+     * Update the list of appointments
+     * @throws java.sql.SQLException
+     */
+    public void updateAppointmentList() throws SQLException {
+        Statement statement = DBConnection.conn.createStatement();
+        String sqlStatement = "SELECT Appointment_ID, Title, Description, Location, Contact_ID, Type, Start, End, Customer_ID FROM appointments ORDER BY Appointment_ID";               
+        ResultSet result = statement.executeQuery(sqlStatement);
+            
+        while (result.next()) {
+            Appointment appointment = new Appointment();
+            appointment.setAppointmentID(result.getInt("Appointment_ID"));
+            appointment.setTitle(result.getString("Title"));
+            appointment.setDescription(result.getString("Description"));
+            appointment.setLocation(result.getString("Location"));
+            appointment.setContact(result.getString("Contact_ID"));
+            appointment.setType(result.getString("Type"));
+            
+            //Perform time zone conversions and set the start time
+            LocalDateTime startParse = LocalDateTime.parse(result.getString("Start"), formatter);
+            ZonedDateTime startZoned = startParse.atZone(ZoneId.of("Etc/GMT"));
+            Instant startInstant = startZoned.toInstant();
+            LocalDateTime startLocal = startInstant.atZone(ZoneId.systemDefault()).toLocalDateTime();           
+            appointment.setStartTime(startLocal);
+            
+            //Perform time zone conversions and set the end time
+            LocalDateTime endParse = LocalDateTime.parse(result.getString("End"), formatter);
+            ZonedDateTime endZoned = endParse.atZone(ZoneId.of("Etc/GMT"));
+            Instant endInstant = endZoned.toInstant();
+            LocalDateTime endLocal = endInstant.atZone(ZoneId.systemDefault()).toLocalDateTime();           
+            appointment.setEndTime(endLocal);
+            
+            appointment.setCustId(result.getInt("Customer_ID"));           
+            appointments.addAll(appointment);
+        }        
+        updateAppointmentTable();        
+    }
+    
+    /**
+     * Update the appointments table
+     */
+    public void updateAppointmentTable() {
+        //appointmentTable.getItems().clear();
+        
+        if (isWeekView) {
+            nextWeekAppointments(appointments);
+        }
+        else {
+            nextMonthAppointments(appointments);
+        }     
+    }
+    
+    /**
+     * Method to get the selected appointment
+     * @return 
+     */
+    public static Appointment getSelectedAppointment() {
+        return selectedAppointment;
+    }
+
+    /**
+     * Find appointments within the next week
+     */
+    private void nextWeekAppointments(ObservableList<Appointment> appointments) {
+        
+        ObservableList<Appointment> newAppointments = FXCollections.observableArrayList();
+        newAppointments.clear();
+        
+        LocalDateTime today = LocalDateTime.now();
+        LocalDateTime oneWeek = LocalDateTime.now().plusWeeks(1);
+        LocalDateTime start;
+        
+        for(Appointment appointment : appointments) {
+            start = appointment.getStartTime();
+            if (start.isBefore(oneWeek) && start.isAfter(today)) {
+                newAppointments.add(appointment);
+            }
+        }  
+        appointmentTable.getItems().clear();
+        appointmentTable.setItems(newAppointments); 
+    }
+
+    /**
+     * Find appointments within the next month
+     */
+    private void nextMonthAppointments(ObservableList<Appointment> appointments) {
+        ObservableList<Appointment> newAppointments = FXCollections.observableArrayList();
+        newAppointments.clear();
+        LocalDateTime today = LocalDateTime.now();
+        LocalDateTime oneMonth = LocalDateTime.now().plusMonths(1);
+        LocalDateTime start;
+        
+        for(Appointment appointment : appointments) {
+            start = appointment.getStartTime();
+            if (start.isBefore(oneMonth) && start.isAfter(today)) {
+                newAppointments.add(appointment);
+            }
+        }        
+        appointmentTable.getItems().clear();
+        appointmentTable.setItems(newAppointments);
+    }
+    
+    /**
+     * Handle the next week radio button
+     * @throws java.sql.SQLException
+     */
+    public void handleWeek () throws SQLException {
+        isWeekView = true;
+        appointmentTable.getItems().clear();    
+        updateAppointmentTable();
+    }
+    
+    /**
+     * Handle the next month radio button
+     * @throws java.sql.SQLException
+     */
+    public void handleMonth () throws SQLException {
+        isWeekView = false;
+        appointmentTable.getItems().clear();
+        updateAppointmentTable();
     }
     
     /**
@@ -148,8 +315,8 @@ public class MainScreenController implements Initializable {
         appointmentLocationCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getLocation()));
         appointmentContactCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getContact()));
         appointmentTypeCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getType()));
-        appointmentStartCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getStartTime().format(formatter)));
-        appointmentEndCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getEndTime().format(formatter)));
+        appointmentStartCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getStartTime().atZone(zone).format(formatter)));
+        appointmentEndCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getEndTime().atZone(zone).format(formatter)));
         appointmentCustIdCol.setCellValueFactory(cellData -> new SimpleIntegerProperty(cellData.getValue().getCustId()).asObject());
         
         try {
@@ -158,91 +325,4 @@ public class MainScreenController implements Initializable {
             Logger.getLogger(MainScreenController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }    
-
-    private void updateAppointmentList() throws SQLException {
-        Statement statement = DBConnection.conn.createStatement();
-        String sqlStatement = "SELECT Appointment_ID, Title, Description, Location, Contact_ID, Type, Start, End, Customer_ID FROM appointments ORDER BY Appointment_ID";               
-        ResultSet result = statement.executeQuery(sqlStatement);
-        
-        
-        while (result.next()) {
-            Appointment appointment = new Appointment();
-            appointment.setAppointmentID(result.getInt("Appointment_ID"));
-            appointment.setTitle(result.getString("Title"));
-            appointment.setDescription(result.getString("Description"));
-            appointment.setLocation(result.getString("Location"));
-            appointment.setContact(result.getString("Contact_ID"));
-            appointment.setType(result.getString("Type"));
-            appointment.setStartTime(LocalDateTime.parse(result.getString("Start"), formatter));
-            appointment.setEndTime(LocalDateTime.parse(result.getString("End"), formatter));
-            appointment.setCustId(result.getInt("Customer_ID"));           
-            appointments.addAll(appointment);
-        }        
-        updateAppointmentTable();        
-    }
-    
-    public void updateAppointmentTable() {
-        //appointmentTable.getItems().clear();
-        
-        if (isWeekView) {
-            nextWeekAppointments(appointments);
-        }
-        else {
-            nextMonthAppointments(appointments);
-        }     
-    }
-    
-    public static Appointment getSelectedAppointment() {
-        return selectedAppointment;
-    }
-
-    private void nextWeekAppointments(ObservableList<Appointment> appointments) {
-        
-        ObservableList<Appointment> newAppointments = FXCollections.observableArrayList();
-        newAppointments.clear();
-        
-        LocalDateTime today = LocalDateTime.now();
-        LocalDateTime oneWeek = LocalDateTime.now().plusWeeks(1);
-        LocalDateTime start;
-        
-        for(Appointment appointment : appointments) {
-            start = appointment.getStartTime();
-            if (start.isBefore(oneWeek) && start.isAfter(today)) {
-                newAppointments.add(appointment);
-            }
-        }  
-        appointmentTable.getItems().clear();
-        appointmentTable.setItems(newAppointments); 
-    }
-
-    private void nextMonthAppointments(ObservableList<Appointment> appointments) {
-        ObservableList<Appointment> newAppointments = FXCollections.observableArrayList();
-        newAppointments.clear();
-        LocalDateTime today = LocalDateTime.now();
-        LocalDateTime oneMonth = LocalDateTime.now().plusMonths(1);
-        LocalDateTime start;
-        
-        for(Appointment appointment : appointments) {
-            start = appointment.getStartTime();
-            if (start.isBefore(oneMonth) && start.isAfter(today)) {
-                newAppointments.add(appointment);
-            }
-        }        
-        appointmentTable.getItems().clear();
-        appointmentTable.setItems(newAppointments);
-    }
-    
-    public void handleWeek () throws SQLException {
-        isWeekView = true;
-        appointmentTable.getItems().clear();    
-        updateAppointmentTable();
-    }
-    
-    public void handleMonth () throws SQLException {
-        isWeekView = false;
-        appointmentTable.getItems().clear();
-        updateAppointmentTable();
-    }
-    
-
 }

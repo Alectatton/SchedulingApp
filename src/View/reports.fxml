@@ -20,7 +20,7 @@
                         <Insets left="10.0" />
                      </HBox.margin>
                   </RadioButton>
-                  <RadioButton fx:id="byCustomer" mnemonicParsing="false" onAction="#handleByCustomer" prefHeight="17.0" prefWidth="207.0" text="Customer Schedules">
+                  <RadioButton fx:id="byContact" mnemonicParsing="false" onAction="#handleByContact" prefHeight="17.0" prefWidth="207.0" text="Contact Schedules">
                      <HBox.margin>
                         <Insets bottom="5.0" />
                      </HBox.margin>
@@ -43,7 +43,7 @@
                         <Insets left="10.0" top="5.0" />
                      </HBox.margin>
                   </Button>
-                  <ComboBox fx:id="customerBox" onAction="#handleCustomerChange" prefWidth="150.0" promptText="Customer">
+                  <ComboBox fx:id="contactBox" onAction="#handleContactChange" prefWidth="150.0" promptText="Contact">
                      <HBox.margin>
                         <Insets left="425.0" right="5.0" top="5.0" />
                      </HBox.margin>

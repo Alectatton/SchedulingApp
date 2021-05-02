@@ -5,9 +5,7 @@
  */
 package View;
 
-import Model.Appointment;
-import Model.Customer;
-import static View.Log_InController.appointments;
+import Model.Contact;
 import java.io.IOException;
 import static java.lang.String.valueOf;
 import java.net.URL;
@@ -18,7 +16,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.MenuButton;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.stage.Stage;
@@ -43,13 +40,16 @@ public class ReportsController implements Initializable {
 
     @FXML private Button homeButton;
     @FXML private RadioButton byMonth;
-    @FXML private RadioButton byCustomer;
+    @FXML private RadioButton byContact;
     @FXML private RadioButton reportThree;
-    @FXML private ComboBox<Customer> customerBox;
+    @FXML private ComboBox<Contact> contactBox;
     @FXML private TextArea display;
-    ObservableList<Customer> customers = FXCollections.observableArrayList();
+    ObservableList<Contact> contacts = FXCollections.observableArrayList();
     
-    
+    /**
+     * Handle returning to the main screen
+     * @throws java.io.IOException
+     */
     public void handleHomeButton() throws IOException {
         Parent loader = FXMLLoader.load(getClass().getResource("mainScreen.fxml"));
         Scene scene = new Scene(loader);
@@ -59,6 +59,10 @@ public class ReportsController implements Initializable {
         window.show();
     }
     
+    /**
+     * Generate report for appointments by month and type
+     * @throws java.sql.SQLException
+     */
     public void handleByMonth() throws SQLException {
         String msgType = "Type \t\t\t\t\t\t Count \n";
         String typeReturn = "";
@@ -75,7 +79,6 @@ public class ReportsController implements Initializable {
             String count = result.getString("Count(Type)");
             typeReturn = typeReturn + type + "\t\t\t\t\t\t" + count + "\n";
         }
-
         sqlStatement = "SELECT monthname(Start) as Month, Count(monthname(Start)) as Count FROM appointments GROUP BY monthname(Start);";
         result = statement.executeQuery(sqlStatement);
         
@@ -89,24 +92,28 @@ public class ReportsController implements Initializable {
         display.setText(msg);
     }
     
-    public void handleByCustomer() throws SQLException {
-        if (customerBox.getSelectionModel().getSelectedItem() == null) {
+    /**
+     * Generate the report with a schedule for the selected contact
+     * @throws java.sql.SQLException
+     */
+    public void handleByContact() throws SQLException {
+        if (contactBox.getSelectionModel().getSelectedItem() == null) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Select a customer");
-            alert.setContentText("Please select a customer!");
+            alert.setTitle("Select a contact");
+            alert.setContentText("Please select a contact!");
             alert.showAndWait();
             byMonth.setSelected(true);
         }
         else {
-            Customer customer = (Customer) customerBox.getSelectionModel().getSelectedItem();;
-            String ID = valueOf(customer.getCustomerId());
-            String name = valueOf(customer.getCustomerName());
-            String title = "Schedule for customer: " + name + "\n\n\n";
+            Contact contact = (Contact) contactBox.getSelectionModel().getSelectedItem();
+            String ID = valueOf(contact.getContactId());
+            String name = valueOf(contact.getContactName());
+            String title = "Schedule for contact: " + name + "\n\n\n";
             String header = "Appointment ID \t\t Title \t\t Type \t\t Description \t\t Start \t\t End \t\t Customer ID \n\n";
             String sql = "";
         
             Statement statement = DBConnection.conn.createStatement();
-            String sqlStatement = "SELECT Appointment_ID, Title, Type, Description, Start, End FROM appointments WHERE Customer_ID = '" + ID + "';";
+            String sqlStatement = "SELECT Appointment_ID, Title, Type, Description, Start, End FROM appointments WHERE Contact_ID = '" + ID + "';";
             ResultSet result = statement.executeQuery(sqlStatement);
         
             while(result.next()) {
@@ -126,7 +133,10 @@ public class ReportsController implements Initializable {
         }
     }
     
-    //Number of appointments created by each user
+    /**
+     * Report of how many appointments created by each user
+     * @throws java.sql.SQLException
+     */
     public void handleReportThree() throws SQLException {
         
         String header = "Number of appointments created by each user \n\n User \t\t\t # of appointments \n\n";
@@ -146,37 +156,47 @@ public class ReportsController implements Initializable {
         display.setText(msg);
     }
     
-    public void handleCustomerChange() throws SQLException {
-        byCustomer.setSelected(true);
-        handleByCustomer();
+    /**
+     * Handle selecting a customer
+     * @throws java.sql.SQLException
+     */
+    public void handleContactChange() throws SQLException {
+        byContact.setSelected(true);
+        handleByContact();
     }
     
-    public void updateCustomerList() throws SQLException {
+    /**
+     * Add all of the customers in the database into the customer list
+     * @throws java.sql.SQLException
+     */
+    public void updateContactList() throws SQLException {
         Statement statement = DBConnection.conn.createStatement();
-        String sqlStatement = "SELECT Customer_ID, Customer_Name FROM customers";               
+        String sqlStatement = "SELECT Contact_ID, Contact_Name FROM contacts";               
         ResultSet result = statement.executeQuery(sqlStatement);
         
         //Add customers from database into customer list
         while (result.next()) {
-            Customer customer = new Customer();
-            customer.setCustomerId(result.getInt("Customer_ID"));
-            customer.setCustomerName(result.getString("Customer_Name"));           
-            customers.addAll(customer);
+            Contact contact = new Contact();
+            contact.setContactId(result.getInt("Contact_ID"));
+            contact.setContactName(result.getString("Contact_Name"));           
+            contacts.addAll(contact);
         }
         
         //Set drop boxes
-        customerBox.setItems(customers);
+        contactBox.setItems(contacts);
     }
         
 
     /**
      * Initializes the controller class.
+     * @param url
+     * @param rb
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         ToggleGroup reportType = new ToggleGroup();
         byMonth.setToggleGroup(reportType);
-        byCustomer.setToggleGroup(reportType);
+        byContact.setToggleGroup(reportType);
         reportThree.setToggleGroup(reportType);
         byMonth.setSelected(true);
         try {
@@ -186,7 +206,7 @@ public class ReportsController implements Initializable {
         }
         
         try {
-            updateCustomerList();
+            updateContactList();
         } catch (SQLException ex) {
             Logger.getLogger(ReportsController.class.getName()).log(Level.SEVERE, null, ex);
         }
