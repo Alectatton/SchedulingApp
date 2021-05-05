@@ -16,6 +16,9 @@ public class Customer {
     public String customerAddress;
     public String customerPostal;
     public String customerPhone;
+    public String customerCountry;
+    public String customerDivision;
+    public int customerDivisionId;
 
     //Constructor 
     public Customer() {
@@ -24,6 +27,9 @@ public class Customer {
         this.customerAddress = customerAddress;
         this.customerPostal = customerPostal;
         this.customerPhone = customerPhone;
+        this.customerCountry = customerCountry;
+        this.customerDivision = customerDivision;
+        this.customerDivisionId = customerDivisionId;
     }
 
     //Getters
@@ -47,6 +53,18 @@ public class Customer {
         return customerPhone;
     }
     
+    public String getCustomerCountry() {
+        return customerCountry;
+    }
+    
+    public String getCustomerDivision() {
+        return customerDivision;
+    }
+    
+    public int getCustomerDivisionId() {
+        return customerDivisionId;
+    }
+    
     //Setters
     public void setCustomerId(int customerId) {
         this.customerId = customerId;
@@ -67,6 +85,18 @@ public class Customer {
     public void setCustomerPhone(String customerPhone) {
         this.customerPhone = customerPhone;
     }       
+    
+    public void setCustomerCountry(String customerCountry) {
+        this.customerCountry = customerCountry;
+    }
+    
+    public void setCustomerDivision(String customerDivision) {
+        this.customerDivision = customerDivision;
+    }
+    
+    public void setCustomerDivisionId(int customerDivisionId) {
+        this.customerDivisionId = customerDivisionId;
+    }
     
     @Override
     public String toString() {

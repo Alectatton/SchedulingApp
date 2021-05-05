@@ -22,6 +22,7 @@ public class Appointment {
     public LocalDateTime startTime;
     public LocalDateTime endTime;
     public int custId;
+    public int userId; 
 
     public Appointment() {
         this.appointmentID = appointmentID;
@@ -33,6 +34,7 @@ public class Appointment {
         this.startTime = startTime;
         this.endTime = endTime;
         this.custId = custId;
+        this.userId = userId;
     }
 
     public int getAppointmentID() {
@@ -70,7 +72,8 @@ public class Appointment {
     public int getCustId() {
         return custId;
     }
-
+    
+    //Setters
     public void setAppointmentID(int appointmentID) {
         this.appointmentID = appointmentID;
     }
@@ -107,11 +110,19 @@ public class Appointment {
         this.custId = custId;
     }
     
-    
-    
-    
+    public void setUserId(int userId) {
+        this.userId = userId;
+    }   
 
+    //public int getUserId() {
+    //    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    //}
 
-    
-    
+    public int getUserId() {
+        return userId;
+    }
+
+    //public int getUserId() {
+    //    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    //}
 }

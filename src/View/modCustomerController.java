@@ -56,8 +56,8 @@ public class modCustomerController implements Initializable {
     @FXML private ComboBox divisionBox;
     
     //Lists
-    ObservableList<Country> countries = FXCollections.observableArrayList();
-    ObservableList<Division> divisions = FXCollections.observableArrayList();
+    static ObservableList<Country> countries = FXCollections.observableArrayList();
+    static ObservableList<Division> divisions = FXCollections.observableArrayList();
     
   
     /**
@@ -132,7 +132,7 @@ public class modCustomerController implements Initializable {
     */
     public void countryList() throws SQLException {     
         Statement statement = DBConnection.conn.createStatement();
-        String sqlStatement = "SELECT Country, Country_ID FROM countries WHERE Country_ID = 231 OR Country_ID = 230 OR Country_ID = 38 GROUP BY Country_ID;";               
+        String sqlStatement = "SELECT Country, Country_ID FROM countries GROUP BY Country_ID;";               
         ResultSet result = statement.executeQuery(sqlStatement);
             
         while (result.next()) {         
@@ -163,7 +163,6 @@ public class modCustomerController implements Initializable {
             division.setDivisionId(result.getInt("Division_ID"));
             divisions.addAll(division);
         }
-        divisionBox.setItems(divisions);
     }
     
     /**
@@ -180,23 +179,64 @@ public class modCustomerController implements Initializable {
     }
     
     /**
+     * Get the country object from the string country name
+     * @param name
+     * @return 
+     */
+    public Country getCountryFromName(String name) {
+       for (Country country : countries) {
+            if (name.equals(country.getCountryName())) {
+                return country;
+            }
+        }
+        return null;  
+    }
+    
+    /**
+     * Get the division object from the string division name
+     * @param name
+     * @return 
+     */
+    public Division getDivisionFromName(String name) {
+        for (Division division : divisions) {
+            if (name.equals(division.getDivision())) {
+                return division;
+            }
+        }
+        return null;
+    }
+    
+    /**
      * Initializes the controller class.
      * @param url
      * @param rb
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        
+
         Customer selectedCustomer = getSelectedCustomer();
-        nameText.setText(selectedCustomer.getCustomerName());
-        addressText.setText(selectedCustomer.getCustomerAddress());
-        postalText.setText(selectedCustomer.getCustomerPostal());
-        phoneText.setText(selectedCustomer.getCustomerPhone());
         
         try {
             countryList();
+            countryBox.setItems(countries);
+            countryBox.getSelectionModel().select(getCountryFromName(selectedCustomer.getCustomerCountry()));
         } catch (SQLException ex) {
             Logger.getLogger(modCustomerController.class.getName()).log(Level.SEVERE, null, ex);
         }
-    }        
+        
+        try {
+            updateDivision();
+            divisionBox.setItems(divisions);
+            divisionBox.getSelectionModel().select(getDivisionFromName(selectedCustomer.getCustomerDivision()));
+        } catch (SQLException ex) {
+            Logger.getLogger(modCustomerController.class.getName()).log(Level.SEVERE, null, ex);        
+        }
+
+        nameText.setText(selectedCustomer.getCustomerName());
+        addressText.setText(selectedCustomer.getCustomerAddress());
+        postalText.setText(selectedCustomer.getCustomerPostal());
+        phoneText.setText(selectedCustomer.getCustomerPhone());  
+    }
+    
+    
 }

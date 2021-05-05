@@ -5,12 +5,13 @@
  */
 package View;
 
-import Model.Appointment;
 import Model.Contact;
 import Model.Customer;
 import Model.User;
+import Model.Appointment;
 import static View.Log_InController.appointments;
 import static View.MainScreenController.getSelectedAppointment;
+import static View.MainScreenController.selectedAppointment;
 import java.io.IOException;
 import static java.lang.String.valueOf;
 import java.net.URL;
@@ -301,6 +302,7 @@ public class modAppointmentController implements Initializable {
         LocalTime endTime = (LocalTime) endTimeBox.getValue();
         LocalDateTime startDateTime = startDate.atTime(startTime);
         LocalDateTime endDateTime = startDate.atTime(endTime);
+        appointments.remove(selectedAppointment);
         
         //Lambda expression to filter appointments and check for overlap
         FilteredList<Appointment> overlapping = new FilteredList<>(appointments);
@@ -330,12 +332,61 @@ public class modAppointmentController implements Initializable {
         System.out.println(selectedAppointment);
         
         appointmentIdBox.setText(String.valueOf(selectedAppointment.getAppointmentID()));
-        customerIdBox.setText(String.valueOf(selectedAppointment.getCustId()));
+        
         titleBox.setText(selectedAppointment.getTitle());
         descriptionBox.setText(selectedAppointment.getDescription());
         locationBox.setText(selectedAppointment.getLocation());
         typeBox.setText(selectedAppointment.getType());
+    
+        contactList.getSelectionModel().select(findContact(selectedAppointment.getContact()));
         contactBox.setText(selectedAppointment.getContact());
+             
+        customerBox.getSelectionModel().select(findCustomer(selectedAppointment.getCustId()));
+        customerIdBox.setText(String.valueOf(selectedAppointment.getCustId()));
+        customerNameBox.setText(customerBox.getSelectionModel().getSelectedItem().getCustomerName());
+        
+        userBox.getSelectionModel().select(findUser(selectedAppointment.getUserId()));
+        userIdBox.setText(valueOf(selectedAppointment.getUserId()));
+         
+        dateBox.setValue(selectedAppointment.getStartTime().toLocalDate());
+        startTimeBox.getSelectionModel().select(selectedAppointment.getStartTime().toLocalTime());
+        endTimeBox.getSelectionModel().select(selectedAppointment.getEndTime().toLocalTime());
+    }
+    
+    public Contact findContact(String id) {
+        for (Contact contact : contacts) {
+            if (Integer.parseInt(id) == contact.getContactId()) {
+                return contact;
+            }
+        }
+        return null;
+    }
+    /**
+     * Method to return a user object based off of a user id
+     * @param id
+     * @return 
+     */
+    public User findUser (int id) {
+        for (User user : users) {
+            if (id == user.getUserId()) {
+                return user;
+            }
+        }
+        return null;
+    }
+    
+    /**
+     * Method to return a customer based on a customer ID
+     * @param id
+     * @return 
+     */
+    public Customer findCustomer (int id) {
+        for (Customer customer : customers) {
+            if (id == customer.getCustomerId()) {
+                return customer;
+            }
+        }
+        return null;
     }
     
     /**
@@ -374,11 +425,11 @@ public class modAppointmentController implements Initializable {
     */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        try {
-            updateInfo();
+        try {   
             updateCustomerList();    
             updateContactList();
             updateUserList();
+            updateInfo();
         } catch (SQLException ex) {
             Logger.getLogger(modAppointmentController.class.getName()).log(Level.SEVERE, null, ex);
         }

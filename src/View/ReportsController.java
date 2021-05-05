@@ -23,6 +23,8 @@ import utils.DBConnection;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.collections.FXCollections;
@@ -63,33 +65,32 @@ public class ReportsController implements Initializable {
      * Generate report for appointments by month and type
      * @throws java.sql.SQLException
      */
-    public void handleByMonth() throws SQLException {
-        String msgType = "Type \t\t\t\t\t\t Count \n";
-        String typeReturn = "";
-        String msgSplit = "\n\n";
-        String msgMonth = "Month \t\t\t\t\t\t Count \n";
-        String monthReturn = "";
-        
+    public void handleByMonth() throws SQLException {      
+        String msg = "Number of appointments per month by type \n\n";
         Statement statement = DBConnection.conn.createStatement();
-        String sqlStatement = "SELECT Type, Count(Type) FROM appointments GROUP BY Type";
+        String sqlStatement = "SELECT Type FROM appointments GROUP BY Type";
         ResultSet result = statement.executeQuery(sqlStatement);
+        List<String> typeList = new ArrayList<String>();
+        display.setText(msg);    
         
         while(result.next()) {
-            String type = result.getString("Type");
-            String count = result.getString("Count(Type)");
-            typeReturn = typeReturn + type + "\t\t\t\t\t\t" + count + "\n";
-        }
-        sqlStatement = "SELECT monthname(Start) as Month, Count(monthname(Start)) as Count FROM appointments GROUP BY monthname(Start);";
-        result = statement.executeQuery(sqlStatement);
-        
-        while(result.next()) {
-            String month = result.getString("Month");
-            String count = result.getString("Count");
-            monthReturn = monthReturn + month + "\t\t\t\t\t\t\t" + count + "\n";
+            String typeString = result.getString("Type");
+            typeList.add(typeString);
         }
         
-        String msg = msgType + typeReturn + msgSplit + msgMonth + monthReturn;
-        display.setText(msg);
+        for (String type : typeList) {
+            sqlStatement = "SELECT monthname(Start) as Month, Count(monthname(start)) as Count FROM appointments WHERE Type='" + type + "' GROUP BY monthname(Start)";
+            result = statement.executeQuery(sqlStatement);
+            String message = "";
+            while(result.next()) {
+                String month = result.getString("Month");
+                String count = result.getString("Count");
+                message = message + month + "\t\t\t\t\t\t" + count + "\n";
+            }
+            String header = "\n\nAppointments by type: " + type + "\nMonth \t\t\t\t\t Count \n";
+            String output = header + message;
+            display.appendText(output);
+        }
     }
     
     /**

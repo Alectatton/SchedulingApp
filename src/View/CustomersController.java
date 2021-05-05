@@ -5,7 +5,11 @@
  */
 package View;
 
+import Model.Country;
 import Model.Customer;
+import Model.Division;
+import static View.modCustomerController.countries;
+import static View.modCustomerController.divisions;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.ResultSet;
@@ -53,6 +57,8 @@ public class CustomersController implements Initializable {
     static Customer selectedCustomer;
     
     ObservableList<Customer> customers = FXCollections.observableArrayList();
+    static ObservableList<Country> countries = FXCollections.observableArrayList();
+    static ObservableList<Division> divisions = FXCollections.observableArrayList();
     
     
     /**
@@ -132,12 +138,12 @@ public class CustomersController implements Initializable {
     }
     
      /**
-     * Method to update the customers table with all of the customers in the database
+     * Method to update the customers table and List with all of the customers in the database
      * @throws java.sql.SQLException
      */
     public void updateCustomersTable () throws SQLException {
         Statement statement = DBConnection.conn.createStatement();
-        String sqlStatement = "SELECT Customer_ID, Customer_Name, Address, Postal_Code, Phone FROM customers ORDER BY customers.Customer_ID";        
+        String sqlStatement = "SELECT Customer_ID, Customer_Name, Address, Postal_Code, Phone, Division_ID FROM customers ORDER BY customers.Customer_ID";        
         ResultSet result = statement.executeQuery(sqlStatement);
         while (result.next()) {
             Customer customer = new Customer();
@@ -146,9 +152,40 @@ public class CustomersController implements Initializable {
             customer.setCustomerAddress(result.getString("Address"));
             customer.setCustomerPostal(result.getString("Postal_Code"));
             customer.setCustomerPhone(result.getString("Phone"));
+            customer.setCustomerDivisionId(result.getInt("Division_ID"));
+            customer.setCustomerDivision(findDivision(result.getInt("Division_ID")));
+            customer.setCustomerCountry(findCountry(result.getInt("Division_ID")));
             customers.addAll(customer);
-        }
+        }        
         customerTable.setItems(customers);
+    }
+    
+    /**
+     * Find the division for each given customer based on the division ID
+     * @param id
+     * @return
+     * @throws SQLException 
+     */
+    public String findDivision(int id) throws SQLException {
+        Statement divStatement = DBConnection.conn.createStatement();
+        String divSQL = "SELECT Division FROM first_level_divisions WHERE Division_ID = '" + id + "';";
+        ResultSet divisionResult = divStatement.executeQuery(divSQL);
+        divisionResult.next();
+        return divisionResult.getString("Division");
+    }
+    
+    /**
+     * Find the country for each given customer based on the division ID
+     * @param id
+     * @return
+     * @throws SQLException 
+     */
+    public String findCountry (int id) throws SQLException {
+        Statement countryStatement = DBConnection.conn.createStatement();
+        String countrySQL = "SELECT Country FROM countries WHERE countries.Country_ID = (SELECT Country_ID FROM first_level_divisions WHERE Division_ID = '" + id + "');";
+        ResultSet countryResult = countryStatement.executeQuery(countrySQL);
+        countryResult.next();
+        return countryResult.getString("Country");
     }
     
     /**
@@ -170,6 +207,32 @@ public class CustomersController implements Initializable {
         return selectedCustomer;
     }
     
+    public void updateCountriesList() throws SQLException {     
+        Statement statement = DBConnection.conn.createStatement();
+        String sqlStatement = "SELECT Country, Country_ID FROM countries GROUP BY Country_ID;";               
+        ResultSet result = statement.executeQuery(sqlStatement);
+            
+        while (result.next()) {         
+            Country country = new Country();  
+            country.setCountryId(result.getInt("Country_ID"));
+            country.setCountryName(result.getString("Country"));
+            countries.addAll(country);
+        }               
+    }
+    
+    public void updateDivisionList() throws SQLException {
+        Statement statement = DBConnection.conn.createStatement();
+        String sqlStatement = "SELECT Division, Division_ID FROM first_level_divisions;";               
+        ResultSet result = statement.executeQuery(sqlStatement);
+        
+        while (result.next()) {
+            Division division = new Division();
+            division.setDivision(result.getString("Division"));
+            division.setDivisionId(result.getInt("Division_ID"));
+            divisions.addAll(division);
+        }
+    }
+    
     /**
      * Initializes the controller class.
      * @param url
@@ -185,6 +248,8 @@ public class CustomersController implements Initializable {
         
         try {
             updateCustomersTable();
+            updateCountriesList();
+            updateDivisionList();
         } catch (SQLException ex) {
             Logger.getLogger(CustomersController.class.getName()).log(Level.SEVERE, null, ex);
         }

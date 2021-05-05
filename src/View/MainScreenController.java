@@ -6,8 +6,6 @@
 package View;
 
 import Model.Appointment;
-import Model.Customer;
-import static View.CustomersController.selectedCustomer;
 import static View.Log_InController.appointments;
 import java.io.IOException;
 import java.net.URL;
@@ -15,13 +13,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.Instant;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -132,17 +127,20 @@ public class MainScreenController implements Initializable {
             nullalert.showAndWait();
         }
         else {
-            int selectedId = selectedAppointment.getAppointmentID();  
+            int selectedId = selectedAppointment.getAppointmentID(); 
+            String selectedType = selectedAppointment.getType();
             Statement statement = DBConnection.conn.createStatement();
             String sqlStatement = "DELETE FROM appointments WHERE Appointment_ID = " + selectedId + ";";        
             statement.execute(sqlStatement);  
-        
+            
+            
+            
             appointments.removeAll(appointments);
             updateAppointmentList();
         
             Alert nullalert = new Alert(Alert.AlertType.CONFIRMATION);
             nullalert.setTitle("Success!");
-            nullalert.setContentText("Selected appointment removed");
+            nullalert.setContentText("Appointment with ID: " + selectedId + "\nand of type: " + selectedType + "\nhas been removed from the database.");
             nullalert.showAndWait();
         }
     }
@@ -179,7 +177,7 @@ public class MainScreenController implements Initializable {
      */
     public void updateAppointmentList() throws SQLException {
         Statement statement = DBConnection.conn.createStatement();
-        String sqlStatement = "SELECT Appointment_ID, Title, Description, Location, Contact_ID, Type, Start, End, Customer_ID FROM appointments ORDER BY Appointment_ID";               
+        String sqlStatement = "SELECT Appointment_ID, Title, Description, Location, Contact_ID, Type, Start, End, Customer_ID, User_ID FROM appointments ORDER BY Appointment_ID";               
         ResultSet result = statement.executeQuery(sqlStatement);
             
         while (result.next()) {
@@ -190,6 +188,7 @@ public class MainScreenController implements Initializable {
             appointment.setLocation(result.getString("Location"));
             appointment.setContact(result.getString("Contact_ID"));
             appointment.setType(result.getString("Type"));
+            appointment.setUserId(result.getInt("User_ID"));
             
             //Perform time zone conversions and set the start time
             LocalDateTime startParse = LocalDateTime.parse(result.getString("Start"), formatter);

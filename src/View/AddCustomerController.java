@@ -70,6 +70,8 @@ public class AddCustomerController implements Initializable {
             String phone = phoneText.getText();
             String createdBy = "Test";
             String lastUpdatedBy = createdBy;
+            //Country country = (Country) countryBox.getSelectionModel().getSelectedItem();
+            //String countryName = country.getCountryName();
             Division division = (Division) divisionBox.getSelectionModel().getSelectedItem();
             int divisionId = division.getDivisionId();
         
@@ -123,7 +125,7 @@ public class AddCustomerController implements Initializable {
     */
     public void countryList() throws SQLException {     
         Statement statement = DBConnection.conn.createStatement();
-        String sqlStatement = "SELECT Country, Country_ID FROM countries WHERE Country_ID = 231 OR Country_ID = 230 OR Country_ID = 38 GROUP BY Country_ID;";               
+        String sqlStatement = "SELECT Country, Country_ID FROM countries GROUP BY Country_ID;";               
         ResultSet result = statement.executeQuery(sqlStatement);
             
         while (result.next()) {         

@@ -139,7 +139,7 @@ public class Log_InController implements Initializable {
         System.out.println("Times");
         
         Statement statement = DBConnection.conn.createStatement();
-        String sqlStatement = "SELECT Appointment_ID, Title, Description, Location, Contact_ID, Type, Start, End, Customer_ID FROM appointments ORDER BY Appointment_ID";               
+        String sqlStatement = "SELECT Appointment_ID, Title, Description, Location, Contact_ID, Type, Start, End, Customer_ID, User_ID FROM appointments ORDER BY Appointment_ID";               
         ResultSet result = statement.executeQuery(sqlStatement);
             
         while (result.next()) {
@@ -150,6 +150,7 @@ public class Log_InController implements Initializable {
             appointment.setLocation(result.getString("Location"));
             appointment.setContact(result.getString("Contact_ID"));
             appointment.setType(result.getString("Type"));
+            appointment.setUserId(result.getInt("User_ID"));
             
             //Perform time zone conversions and set the start time
             LocalDateTime startParse = LocalDateTime.parse(result.getString("Start"), formatter);
